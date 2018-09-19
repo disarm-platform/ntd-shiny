@@ -1,0 +1,13 @@
+name: NTD_wireframe
+title: NTD_wireframe
+username:
+account: hughapps
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 435383
+bundleId: 1581210
+url: https://hughapps.shinyapps.io/NTD_wireframe/
+when: 1536711195.96801
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: GADM_2.8_CIV_adm0.rds|GADM_2.8_ZWE_adm0.rds|test3.json|data/Sm_cdi_subset.csv|data/Sm_cdi_villages.csv
