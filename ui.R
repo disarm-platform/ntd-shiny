@@ -7,30 +7,42 @@ library(shinydashboard)
 
 dashboardPage(
   dashboardHeader(),
-  dashboardSidebar(fileInput("File", "Observations"),
-                   fileInput("predFile", "Villages")),
+  dashboardSidebar(disable = T),
   dashboardBody(
     fluidRow(
-      column(width = 12,
-             #box(width = NULL, solidHeader = TRUE,
-              #leafletOutput("prob_map", 
-              #              height = 500)),
+      #column(width = 12,
+             box(width = NULL, 
+                    title = "Intro",#solidHeader = TRUE,
+                        fileInput("File", "Observations"),
+                        fileInput("predFile", "Villages")),
+             
+             tabBox(tabPanel(title = "Hotspots",
+                             leafletOutput("prob_map", height = 500)),
+                    
+                    tabPanel(title = "Adaptive sampling",
+                             dataTableOutput('pred_table'))
+                    
+                    # tabPanel("Hotspots",
+                    #     leafletOutput("prob_map", height = 500),
+                    #     dataTableOutput('pred_table')),
+                    # 
+                    # tabPanel("Adaptive sampling",
+                    #           dataTableOutput('pred_table'),
+                    #           leafletOutput("prob_map", height = 500)
+                    #  )
+             )
+             )
+
+             
       
-      tabBox(width = 12, 
-             tabPanel("Hotspots",    #title = "Villages to target for further surveys",
-        dataTableOutput('pred_table'),
-        leafletOutput("hotspot_map", height = 500)
-      ),
-      
-      tabPanel("Adaptive sampling",
-               dataTableOutput('pred_table'),
-               leafletOutput("prob_map", height = 500)
-               )
+      #box(width = 12, title = "Villages to target for further surveys",
+      #  dataTableOutput('pred_table')
       )
-)
-)
-)
-)
+      )
+
+
+
+
 
 # shinyUI(bootstrapPage(
 #   tags$style(type = "text/css", "html, body {width:100%;height:100%}", 
