@@ -12,13 +12,37 @@ dashboardPage(
     fluidRow(
       #column(width = 12,
              box(width = 12, 
-                    title = "Intro", "Some explaination here about the app",
-                        fileInput("File", "Observations"),
+                    h3("NTD mapping app"), p("This application is designed to help understand whether having village level
+                                              predictions of hotspots is useful to NTD programs. Given an input of infection/sero 
+                                              prevalence at villages, the app is designed to provide two outputs. 1) location 
+                                              of likely hotspot villages and 2) locations to next visit to collect more data in
+                                              order to update your hotspot prediction map. To test the app, you can download the 
+                                              demo files below to see their structure and then upload using the upload box."),
+                 
+                                            p("tes"),
+                 
+                 helpText(a("Demo survey data",     
+                            href="https://www.dropbox.com/s/dxpdwvqez2pvszm/Sm_cdi_observations.csv?dl=1"),
+                          target="_blank"), 
+                 
+                 helpText(a("Demo village data",     
+                            href="https://www.dropbox.com/s/tn4lmpvlgubtrey/Sm_cdi_villages.csv?dl=1"),
+                          target="_blank"), 
+                 
+                        fileInput("File", "Survey data"),
                         fileInput("predFile", "Villages")),
             
              
              tabBox(width = 12, height = 1000,
                     tabPanel(title = "Hotspots", width = 12, 
+                             
+                             p('My first paragraph, with some ',
+                               strong('bold'),
+                               ' text.'),
+                             
+                             p(h2('para 2')),
+                             
+                             
                              box(leafletOutput("hotspot_map", height = 500), width = 8),
                              box(sliderInput("prob_threshold", 
                                              "Select areas where the probability of being a hotspot is at least",
