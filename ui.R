@@ -11,16 +11,24 @@ dashboardPage(
   dashboardBody(
     fluidRow(
       #column(width = 12,
-             box(width = NULL, 
-                    title = "Intro",#solidHeader = TRUE,
+             box(width = 12, 
+                    title = "Intro", "Some explaination here about the app",
                         fileInput("File", "Observations"),
                         fileInput("predFile", "Villages")),
+            
              
-             tabBox(tabPanel(title = "Hotspots",
-                             leafletOutput("prob_map", height = 500)),
+             tabBox(width = 12, height = 1000,
+                    tabPanel(title = "Hotspots", width = 12, 
+                             box(leafletOutput("hotspot_map", height = 500), width = 8),
+                             box(sliderInput("prob_threshold", 
+                                             "Select areas where the probability of being a hotspot is at least",
+                                             min = 0, max= 100, value=50, post = "%"), width = 4),
+                             box(dataTableOutput('hotspot_table'), width = 4)),
                     
                     tabPanel(title = "Adaptive sampling",
-                             dataTableOutput('pred_table'))
+
+                             box(leafletOutput("prob_map", height = 500), width = 8),
+                             box(dataTableOutput('pred_table'), width = 4))
                     
                     # tabPanel("Hotspots",
                     #     leafletOutput("prob_map", height = 500),
@@ -38,7 +46,8 @@ dashboardPage(
       #box(width = 12, title = "Villages to target for further surveys",
       #  dataTableOutput('pred_table')
       )
-      )
+)
+      
 
 
 

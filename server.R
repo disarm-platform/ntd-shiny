@@ -87,11 +87,55 @@ shinyServer(function(input, output){
           })
   })
   
-  output$pred_table <- renderDataTable({map_data()$points})
+  output$pred_table <- renderDataTable({
+    if(is.null(map_data())){
+      return(NULL)
+    }
+    uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
+    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,]
+    names(output_table) <- c("Probability of being a hotspot", "Village ID", "Hotspot prediction")
+    output_table
+  })
+  
+  output$hotspot_table <- renderDataTable({
+    if(is.null(map_data())){
+      return(NULL)
+    }
+    hotspot_index <- which(map_data()$spdf_data$probability >= input$prob_threshold/100)
+    hotspot_table <- map_data()$spdf_data[hotspot_index,2:1]
+    names(hotspot_table) <- c("Village ID", "Probability of being a hotspot")
+    hotspot_table
+  })
+  
+  output$hotspot_map <- renderLeaflet({
+    
+    if(is.null(map_data())){
+      return(NULL)
+    }
+    
+    # Define color palette
+    pal <- colorNumeric(wes_palette("Zissou1", 10, type = "continuous")[1:10], seq(0,1,0.01))
+    
+    labels <- sprintf(
+      "<strong>%s</strong><br/>Hotspot probability %g",
+      map_data()$spdf_data$id, round(map_data()$spdf_data$probability,3)
+    ) %>% lapply(htmltools::HTML)
+    
+    # Map
+    hotspot_class <- ifelse(map_data()$spdf_data$probability >= input$prob_threshold/100,1,0)
+    map %>% addPolygons(data=map_data()$sp_Polygons, 
+                        color = pal(hotspot_class), 
+                        fillOpacity = 0.6, weight = 1,
+                        highlightOptions = highlightOptions(
+                          weight = 5,
+                          color = "#666",
+                          bringToFront = TRUE,
+                          fillOpacity = 0.7),
+                        label = labels
+    )
+  })
   
   output$prob_map <- renderLeaflet({
-    
-    browser()
     
     if(is.null(map_data())){
       return(NULL)
@@ -100,12 +144,9 @@ shinyServer(function(input, output){
     # Define color palette
     pal <- colorNumeric(wes_palette("Zissou1", 10, type = "continuous")[1:10], seq(0,1,0.01))
 
-    # define modal table
+    # define uncertainty
     uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
-    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,]
-    names(output_table) <- c("Probability of being a hotspot", "Village ID", "Hotspot prediction")
-    output$pred_table <- renderDataTable({output_table})
-
+    
     # map
     labels <- sprintf(
       "<strong>%s</strong><br/>Hotspot probability %g",
