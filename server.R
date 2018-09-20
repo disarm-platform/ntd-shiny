@@ -9,10 +9,11 @@ library(httr)
 library(wesanderson)
 library(readr)
 library(stringi)
+library(DT)
 
 # Define map
 
-map <- leaflet() %>%
+map <- leaflet(max) %>%
   addTiles("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png") 
 
 shinyServer(function(input, output){
@@ -94,7 +95,7 @@ shinyServer(function(input, output){
     uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
     output_table <- map_data()$spdf_data[order(uncertainty),][1:5,]
     names(output_table) <- c("Probability of being a hotspot", "Village ID", "Hotspot prediction")
-    output_table
+    DT::datatble(output_table, options = list(pageLength = 15))
   })
   
   output$hotspot_table <- renderDataTable({
@@ -104,13 +105,13 @@ shinyServer(function(input, output){
     hotspot_index <- which(map_data()$spdf_data$probability >= input$prob_threshold/100)
     hotspot_table <- map_data()$spdf_data[hotspot_index,2:1]
     names(hotspot_table) <- c("Village ID", "Probability of being a hotspot")
-    hotspot_table
+    DT::datatable(hotspot_table, options = list(pageLength = 15))
   })
   
   output$hotspot_map <- renderLeaflet({
     
     if(is.null(map_data())){
-      return(NULL)
+      return(map %>% setView(0,0,zoom=2))
     }
     
     # Define color palette
@@ -132,13 +133,14 @@ shinyServer(function(input, output){
                           bringToFront = TRUE,
                           fillOpacity = 0.7),
                         label = labels
-    )
+    ) %>%
+      addLegend(colors = pal(c(0,1)), labels = c("Not selected", "Selected"))
   })
   
   output$prob_map <- renderLeaflet({
     
     if(is.null(map_data())){
-      return(NULL)
+      return(map %>% setView(0,0,zoom=2))
     }
 
     # Define color palette

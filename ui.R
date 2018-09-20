@@ -19,7 +19,21 @@ dashboardPage(
                                               order to update your hotspot prediction map. To test the app, you can download the 
                                               demo files below to see their structure and then upload using the upload box."),
                  
-                                            p("tes"),
+                                            p('Once the data are uploaded, the two tabs below show the two outputs. The', strong('Hotspots'), 'tab
+                                              allows hotspot villages to be identified by choosing the predicted probability that a village 
+                                              is a hotspot (where a hotspot is defined as a location where infection/sero prevalence 
+                                              is greater than 2%). For example, if the slider is at 50%, the map will show all those
+                                              villages where the probability the village is a hotspot is at least 50%. For a more conservative
+                                              estimate of hotspots, a lower threshold can be used. For example, a program might be willing to 
+                                              classify a village as a hotspot if they are only 30% sure the village is actually a hotspot. 
+                                              In that case, the slider should be moved to 30% and the map and table will update.'),
+                 
+                                              p('The ', strong('Adaptive sampling'), 'tab provides guidance on where to survey next in order to survey 
+                                              a village that will provide the most valuable data. In this case, the village at which the 
+                                              algorithm is least certain about whether it is a hotspot or not is the most sensible location
+                                              to collect more data. Rather than identifying the single most valuable village to visit, the 
+                                              application provides 5 village to choose from. Once data at one of these 5 villages is collected
+                                              the application can be updated and the hotspot and adaptive sampling maps will update.'),
                  
                  helpText(a("Demo survey data",     
                             href="https://www.dropbox.com/s/dxpdwvqez2pvszm/Sm_cdi_observations.csv?dl=1"),
@@ -29,8 +43,8 @@ dashboardPage(
                             href="https://www.dropbox.com/s/tn4lmpvlgubtrey/Sm_cdi_villages.csv?dl=1"),
                           target="_blank"), 
                  
-                        fileInput("File", "Survey data"),
-                        fileInput("predFile", "Villages")),
+                        fileInput("File", "Survey data", width = "20%"),
+                        fileInput("predFile", "Villages", width = "20%")),
             
              
              tabBox(width = 12, height = 1000,
@@ -39,9 +53,6 @@ dashboardPage(
                              p('My first paragraph, with some ',
                                strong('bold'),
                                ' text.'),
-                             
-                             p(h2('para 2')),
-                             
                              
                              box(leafletOutput("hotspot_map", height = 500), width = 8),
                              box(sliderInput("prob_threshold", 
