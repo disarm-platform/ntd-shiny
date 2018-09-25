@@ -93,9 +93,10 @@ shinyServer(function(input, output){
       return(NULL)
     }
     uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
-    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,]
-    names(output_table) <- c("Probability of being a hotspot", "Village ID", "Hotspot prediction")
-    DT::datatble(output_table, options = list(pageLength = 15))
+    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,c(2,1,3)]
+    output_table[,2] <- round(output_table[,2], 2)
+    names(output_table) <- c("Village ID", "Probability of being a hotspot", "Hotspot prediction")
+    DT::datatable(output_table, options = list(pageLength = 15), rownames = F)
   })
   
   output$hotspot_table <- renderDataTable({
@@ -104,8 +105,12 @@ shinyServer(function(input, output){
     }
     hotspot_index <- which(map_data()$spdf_data$probability >= input$prob_threshold/100)
     hotspot_table <- map_data()$spdf_data[hotspot_index,2:1]
+    hotspot_table[,2] <- round(hotspot_table[,2], 2)
     names(hotspot_table) <- c("Village ID", "Probability of being a hotspot")
-    DT::datatable(hotspot_table, options = list(pageLength = 15))
+    DT::datatable(hotspot_table, options = list(pageLength = 15,
+                                                columnDefs = list(list(className = 'dt-center',
+                                                                       target = 1:2))),
+                  rownames = F)
   })
   
   output$hotspot_map <- renderLeaflet({
