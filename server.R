@@ -46,7 +46,7 @@ shinyServer(function(input, output){
                                                 lat = points$lat,
                                                 n_trials = points$Nex,
                                                 n_positive = points$Npos),
-                              request_parameters = list(threshold = 0.5))
+                              request_parameters = list(threshold = 0.02))
 
       # Save json
       json_to_post <- toJSON(input_data_list)
@@ -78,7 +78,7 @@ shinyServer(function(input, output){
       sp_Polygons <<- SpatialPolygons(Poly_list, 1:length(Poly_list))
 
       # create spdf
-      spdf_data <- data.frame(probability = result$estimates$prevalence,
+      spdf_data <- data.frame(probability = result$estimates$exceedance_prob,
                               id = result$estimates$id,
                               class = result$estimates$category)
     

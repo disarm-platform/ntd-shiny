@@ -10,7 +10,9 @@ dashboardPage(
   dashboardSidebar(disable = T),
   dashboardBody(
     fluidRow(
-      #column(width = 12,
+      
+      #includeCSS("styles.css"),
+
              box(width = 12, 
                     h3("NTD mapping app"), h4(p("This application is designed to help understand whether having village level
                                               predictions of hotspots is useful to NTD programs. Given an input of infection/sero 
@@ -42,14 +44,14 @@ dashboardPage(
              tabBox(width = 12, height = 1000,
                     tabPanel(title = strong("Hotspots"), width = 12, 
                              
-                             p('The', strong('Hotspots'), 'tab allows hotspot villages to be identified by choosing the predicted 
+                             h4(p('The', strong('Hotspots'), 'tab allows hotspot villages to be identified by choosing the predicted 
                                 probability that a village 
                                 is a hotspot (where a hotspot is defined as a location where infection/sero prevalence 
                                is greater than 2%). For example, if the slider is at 50%, the map will show all those
                                villages where the probability the village is a hotspot is at least 50%. For a more conservative
                                estimate of hotspots, a lower threshold can be used. For example, a program might be willing to 
                                classify a village as a hotspot if they are only 30% sure the village is actually a hotspot. 
-                               In that case, the slider should be moved to 30% and the map and table will update.'),
+                               In that case, the slider should be moved to 30% and the map and table will update.')),
                              
                              box(leafletOutput("hotspot_map", height = 500), width = 8),
                              box(sliderInput("prob_threshold", 
@@ -59,12 +61,12 @@ dashboardPage(
                     
                     tabPanel(title = strong("Adaptive sampling"),
 
-                             p('The ', strong('Adaptive sampling'), 'tab provides guidance on where to survey next in order to survey 
+                              h4(p('The ', strong('Adaptive sampling'), 'tab provides guidance on where to survey next in order to survey 
                                               a village that will provide the most valuable data. In this case, the village at which the 
                                algorithm is least certain about whether it is a hotspot or not is the most sensible location
                                to collect more data. Rather than identifying the single most valuable village to visit, the 
                                application provides 5 village to choose from. Once data at one of these 5 villages is collected
-                               the application can be updated and the hotspot and adaptive sampling maps will update.'),
+                               the application can be updated and the hotspot and adaptive sampling maps will update.')),
                              
                              box(leafletOutput("prob_map", height = 500), width = 8),
                              box(dataTableOutput('pred_table'), width = 4))
