@@ -11,6 +11,8 @@ library(readr)
 library(stringi)
 library(DT)
 
+source("buff_voronoi.R")
+
 # Define map
 
 map <- leaflet(max) %>%
@@ -65,17 +67,22 @@ shinyServer(function(input, output){
 
       result <<- rjson::fromJSON(response) # this will put the response in a useful format
 
-      # Plot the result back on the map
-      Poly_list <- list()
-
-      for (i in 1:length(result$polygons)){
-        Poly_list[[i]] <- Polygons(list(Polygon(cbind(result$polygons[[i]]$lng,
-                                                      result$polygons[[i]]$lat))), i)
-      }
-      sp_Polygons <- SpatialPolygons(Poly_list, 1:length(Poly_list))
-
-      # Create sp
-      sp_Polygons <<- SpatialPolygons(Poly_list, 1:length(Poly_list))
+      # # Plot the result back on the map
+      # Poly_list <- list()
+      # 
+      # for (i in 1:length(result$polygons)){
+      #   Poly_list[[i]] <- Polygons(list(Polygon(cbind(result$polygons[[i]]$lng,
+      #                                                 result$polygons[[i]]$lat))), i)
+      # }
+      # sp_Polygons <- SpatialPolygons(Poly_list, 1:length(Poly_list))
+      # 
+      # # Create sp
+      # sp_Polygons <<- SpatialPolygons(Poly_list, 1:length(Poly_list))
+      
+      # Create buffered polygons
+      sp_Polygons <- buff_voronoi_test(data.frame(x = pred_points$lng,
+                                             y = pred_points$lat,
+                                             id = pred_points$ID), w_buff = 0.3)
 
       # create spdf
       spdf_data <- data.frame(probability = result$estimates$exceedance_prob,
@@ -88,18 +95,18 @@ shinyServer(function(input, output){
           })
   })
   
-  output$pred_table <- renderDataTable({
+  output$pred_table <- DT::renderDT({
     if(is.null(map_data())){
       return(NULL)
     }
     uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
-    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,c(2,1,3)]
+    output_table <- map_data()$spdf_data[order(uncertainty),][1:5,c(2,1)]
     output_table[,2] <- round(output_table[,2], 2)
-    names(output_table) <- c("Village ID", "Probability of being a hotspot", "Hotspot prediction")
+    names(output_table) <- c("Village ID", "Probability of being a hotspot")
     DT::datatable(output_table, options = list(pageLength = 15), rownames = F)
   })
   
-  output$hotspot_table <- renderDataTable({
+  output$hotspot_table <- DT::renderDT({
     if(is.null(map_data())){
       return(NULL)
     }
@@ -107,7 +114,7 @@ shinyServer(function(input, output){
     hotspot_table <- map_data()$spdf_data[hotspot_index,2:1]
     hotspot_table[,2] <- round(hotspot_table[,2], 2)
     names(hotspot_table) <- c("Village ID", "Probability of being a hotspot")
-    DT::datatable(hotspot_table, options = list(pageLength = 15,
+    DT::datatable(hotspot_table, options = list(pageLength = 10,
                                                 columnDefs = list(list(className = 'dt-center',
                                                                        target = 1:2))),
                   rownames = F)
@@ -139,7 +146,7 @@ shinyServer(function(input, output){
                           fillOpacity = 0.7),
                         label = labels
     ) %>%
-      addLegend(colors = pal(c(0,1)), labels = c("Not selected", "Selected"))
+      addLegend(colors = pal(c(0,1)), labels = c("Not hotspot", "Hotspot"))
   })
   
   output$prob_map <- renderLeaflet({
