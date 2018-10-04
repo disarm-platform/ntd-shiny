@@ -14,15 +14,20 @@ dashboardPage(
       includeCSS("styles.css"),
 
              box(width = 12, 
-                    h3("NTD mapping app"), h4(p("This application is designed to help understand whether having village level
+                    h3("NTD mapping app"), h4(p('This application is designed to help understand whether having village level
                                               predictions of hotspots is useful to NTD programs. Given an input of infection/sero 
                                               prevalence at villages, and locations of all other villages, the app is designed 
-                                              to automatically fit a geospatial model using climatological variables to provide two outputs. 
-                                              1) Location of likely hotspot villages and 2) locations to next visit to collect more data in
+                                              to automatically fit a geospatial model (see',strong('Methods'), 'tab below) using 
+                                              climatological variables (currently 
+                                              temperature, precipitation and seasonality) to provide two outputs:'),
+                                              
+                                              br("1) Location of likely hotspot villages and"),
+                                              
+                                              br("2) optimal location to next visit to collect more data in
                                               order to update your hotspot prediction map. To test the app, you can download the 
                                               demo files below to see their structure and then upload using the upload box."),
                  
-                                            p('Once the data are uploaded, the two tabs below show the two outputs. The', strong('Hotspots'), 'tab
+                                            br('Once the data are uploaded, the two tabs below show the two outputs. The', strong('Hotspots'), 'tab
                                               allows hotspot villages to be identified. The ', strong('Adaptive sampling'), 
                                               'tab provides guidance on where to survey next in order to survey 
                                               a village that will provide the most valuable data.')),
@@ -51,7 +56,7 @@ dashboardPage(
                                is greater than 2%). For example, if the slider is at 50%, the map will show all those
                                villages where the probability the village is a hotspot is at least 50%. For a more conservative
                                estimate of hotspots, a lower threshold can be used. For example, a program might be willing to 
-                               classify a village as a hotspot if they are only 30% sure the village is actually a hotspot. 
+                               classify a village as a hotspot if the model is only 30% sure the village is actually a hotspot. 
                                In that case, the slider should be moved to 30% and the map and table will update.')), width = 12),
                              
                              
@@ -66,12 +71,38 @@ dashboardPage(
                               box(h4(p('The ', strong('Adaptive sampling'), 'tab provides guidance on where to survey next in order to survey 
                                               a village that will provide the most valuable data. In this case, the village at which the 
                                algorithm is least certain about whether it is a hotspot or not is the most sensible location
-                               to collect more data. Rather than identifying the single most valuable village to visit, the 
+                               to collect more data. Research has shown that this type of adaptive sampling improves predictions 
+                                from the geospatial model.
+                                Rather than identifying the single most valuable village to visit, the 
                                application provides 5 village to choose from. Once data at one of these 5 villages is collected
                                the application can be updated and the hotspot and adaptive sampling maps will update.')), width = 12),
                              
                              box(leafletOutput("prob_map", height = 800), width = 8),
-                             box(DT::DTOutput('pred_table'), width = 3))
+                             box(DT::DTOutput('pred_table'), width = 3)),
+                    
+                    tabPanel(title = strong("Methods"),
+                             
+                             box(h4(p("UNDER CONSTRUCTION"),
+                                    
+                                    br('The outputs shown in the', strong('Hotspots'), 'tab and the',
+                                       strong('Adaptive sampling'), 'tab both come from the same geospatial model. The model works by
+                                       characterizing the relationship between the observed prevalence values (numbers positive/numbers tested) 
+                                       at each location and the climatological/enviromnetal conditions at those locations. For example, if we were just to 
+                                       use temperature and elevation, the model would establish what, if any, relationship there is between prevalence
+                                       and these two variables. For example, the model might find that higher prevalence values are found in warmer 
+                                       areas with lower elevation. Once the model has quantified
+                                       these relationships, it is possible to predict prevalence anywhere where we know elevation and temperature.'),
+                                    
+                                    br('Instead of just making a best guess as to what prevalence is at any given location, the model gives us a 
+                                       range or distribution of possible values prevalence could take at every location. Where the model is very certain, 
+                                       this distribution will be narrow. Where the model is less certain, the distribution will be large. 
+                                       This distribution also allows us to estimate the probability
+                                       that prevalence is above or below a certain value. We can do this by looking at what proportion of the distribution 
+                                       is above that threshold value. This is a nice way of using predictions as it allows us to incorporate the
+                                       model uncertainty when interpreting them.')
+                                      
+                                    ), width = 12)
+                    )
                     
              )
              )

@@ -10,6 +10,7 @@ library(wesanderson)
 library(readr)
 library(stringi)
 library(DT)
+library(ggplot2)
 
 source("buff_voronoi.R")
 
@@ -195,7 +196,14 @@ shinyServer(function(input, output){
 
                  }) # end loading bar
   
-
+  output$posterior <- renderPlot({
+    
+    set.seed(1981)
+    binom <- density(rbinom(500, 100, 0.05))
+    binom <- data.frame(x=binom$x, y=binom$y)
+    ggplot(data=binom, aes(x=x, y=y, group=1)) +
+      geom_line()
+  })
   
   # logos
   output$logo <- renderImage({
