@@ -21,11 +21,24 @@ dashboardPage(
                                               climatological variables (currently 
                                               temperature, precipitation and seasonality) to provide two outputs:'),
                                               
-                                              br("1) Location of likely hotspot villages and"),
+                                              br(tags$ol(
+                                                tags$li("Location of likely hotspot villages and"), 
+                                                tags$li("optimal location to next visit to collect more data in
+                                              order to update your hotspot prediction map")
+                                              )),
                                               
-                                              br("2) optimal location to next visit to collect more data in
-                                              order to update your hotspot prediction map. To test the app, you can download the 
-                                              demo files below to see their structure and then upload using the upload box."),
+                                              
+                                              p("To test the app, you can download the 
+                                              demo files below to see their structure and then upload using the upload box. 
+                                              It just needs 2 files:"),
+                                            
+                                            br(tags$ol(
+                                                 tags$li("Survey data (in this case",tags$i("S. mansoni"), "infection prevalence in Cote D'Ivoire)."), 
+                                                 tags$li("Locations of all other villages")
+                                               )),
+                                            
+                                            p('Or you can run using your own data, as long as
+                                              they are in the same format as the demo data.'),
                  
                                             br('Once the data are uploaded, the two tabs below show the two outputs. The', strong('Hotspots'), 'tab
                                               allows hotspot villages to be identified. The ', strong('Adaptive sampling'), 
@@ -99,7 +112,13 @@ dashboardPage(
                                        This distribution also allows us to estimate the probability
                                        that prevalence is above or below a certain value. We can do this by looking at what proportion of the distribution 
                                        is above that threshold value. This is a nice way of using predictions as it allows us to incorporate the
-                                       model uncertainty when interpreting them.')
+                                       model uncertainty when interpreting them.'),
+                                    
+                                    br('We can also use the uncertainty estimates to identify where the model is least sure about whether 
+                                        that location is a hotspot or not. In situations where field teams will be conducting more surveys,
+                                       it makes sense to direct teams to those locations in order to improve the hotspot map. Computerized 
+                                       simulations have shown that selecting survey locations in this way, as opposed to randomly, allows 
+                                       the geospatial models to perform better, improving the certainty we have in the predictions.')
                                       
                                     ), width = 12)
                     )
