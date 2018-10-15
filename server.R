@@ -58,14 +58,23 @@ shinyServer(function(input, output){
 
       # Make call to algorithm
       print("Making request")
-      request <- httr::POST(url = "http://ric70x7.pythonanywhere.com/post",
-                            body = httr::upload_file("test3.json"),
-                            #encode = "json",#this is the path to the json file used as input
-                            httr::content_type("application/json"))
-
+      request_call <- function(){httr::POST(url = "http://ric70x7.pythonanywhere.com/post",
+                                            body = httr::upload_file("test3.json"),
+                                            #encode = "json",#this is the path to the json file used as input
+                                            httr::content_type("application/json"))}
+      request <- request_call()
       print("Got response")
-      response <- httr::content(request, as='text') # this extracts the response from the request object
+      print(request$status_code)
 
+      # Check it ran. If not, run again.
+      if(request$status_code!=200){
+        print("Trying again")
+        request <- request_call()
+        print("Got second response")
+      }
+
+      # parse result
+      response <- httr::content(request, as='text') # this extracts the response from the request object
       result <<- rjson::fromJSON(response) # this will put the response in a useful format
 
       # # Plot the result back on the map
@@ -147,7 +156,19 @@ shinyServer(function(input, output){
                           fillOpacity = 0.7),
                         label = labels
     ) %>%
-      addLegend(colors = pal(c(0,1)), labels = c("Not hotspot", "Hotspot"))
+      
+      addCircleMarkers(map_data()$points$lng, map_data()$points$lat, 
+                       # popup = paste0("<p><strong>Name: </strong>", map_data()$points$ID,
+                       #                                        "<br><strong>Prevalence </strong>",
+                       #                                        c(map_data()$points$Npos / map_data()$points$Nex),
+                       #                                        "<br><strong>N = </strong>",
+                       #                                        map_data()$points$Nex),
+                       group = "Survey points", col = "black", radius=2) %>%
+      
+      addLegend(colors = pal(c(0,1)), labels = c("Not hotspot", "Hotspot")) %>%
+      
+      addLayersControl(overlayGroups = c("Survey points"), 
+                       options = layersControlOptions(collapsed = F))
   })
   
   output$prob_map <- renderLeaflet({
@@ -188,11 +209,20 @@ shinyServer(function(input, output){
                     bringToFront = TRUE,
                     fillOpacity = 0.7),
                   label = labels[order(uncertainty)[1:5]]) %>%
+      
+      addCircleMarkers(map_data()$points$lng, map_data()$points$lat, 
+                       # popup = paste0("<p><strong>Name: </strong>", map_data()$points$ID,
+                       #                                        "<br><strong>Prevalence </strong>",
+                       #                                        c(map_data()$points$Npos / map_data()$points$Nex),
+                       #                                        "<br><strong>N = </strong>",
+                       #                                        map_data()$points$Nex),
+                       group = "Survey points", col = "black", radius=2) %>%
 
     addLegend(colors= wes_palette("Zissou1", 10, type = "continuous")[1:10], labels = seq(0.1,1,0.1),
               title = "Hotspot probability") %>%
 
-      addLayersControl(overlayGroups = "Villages to sample", options = layersControlOptions(collapsed = F))
+      addLayersControl(overlayGroups = c("Villages to sample","Survey points"), 
+                       options = layersControlOptions(collapsed = F))
 
                  }) # end loading bar
   
