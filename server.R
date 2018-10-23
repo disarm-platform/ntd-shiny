@@ -58,7 +58,7 @@ shinyServer(function(input, output){
 
       # Make call to algorithm
       print("Making request")
-      request_call <- function(){httr::POST(url = "http://ric70x7.pythonanywhere.com/post",
+      request_call <- function(){httr::POST(url = "http://172.93.55.70:5000/ntd",
                                             body = httr::upload_file("test3.json"),
                                             #encode = "json",#this is the path to the json file used as input
                                             httr::content_type("application/json"))}
