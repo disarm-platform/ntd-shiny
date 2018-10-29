@@ -38,7 +38,8 @@ dashboardPage(
                                                )),
                                             
                                             p('Or you can run using your own data, as long as
-                                              they are in the same format as the demo data.'),
+                                              they are in the same format as the demo data. You also need to set the prevalence threshold to define 
+                                              a hotspot.'),
                  
                                             br('Once the data are uploaded, the two tabs below show the two outputs. The', strong('Hotspots'), 'tab
                                               allows hotspot villages to be identified. The ', strong('Adaptive sampling'), 
@@ -55,6 +56,9 @@ dashboardPage(
                             href="https://www.dropbox.com/s/tn4lmpvlgubtrey/Sm_cdi_villages.csv?dl=1"),
                           target="_blank"), 
                  
+                        sliderInput("threshold", "Set hotspot prevalence threshold",
+                                    min=0, max=100, value=10, round=TRUE, width = 500),
+                 
                         fileInput("File", "Survey data", width = "20%"),
                         fileInput("predFile", "Villages", width = "20%")),
             
@@ -64,9 +68,8 @@ dashboardPage(
                              
                              box(
                                 h4(p('The', strong('Hotspots'), 'tab allows hotspot villages to be identified by choosing the predicted 
-                                probability that a village 
-                                is a hotspot (in this example a hotspot is defined as a location where infection/sero prevalence 
-                               is greater than 2%). For example, if the slider is at 50%, the map will show all those
+                                probability that a village is a hotspot (i.e. where infection/sero prevalence 
+                               is greater than the threshold set using the slider above). For example, if the slider is at 50%, the map will show all those
                                villages where the probability the village is a hotspot is at least 50%. For a more conservative
                                estimate of hotspots, a lower threshold can be used. For example, a program might be willing to 
                                classify a village as a hotspot if the model is only 30% sure the village is actually a hotspot. 
