@@ -115,7 +115,11 @@ dashboardPage(
                                        This distribution also allows us to estimate the probability
                                        that prevalence is above or below a certain value. We can do this by looking at what proportion of the distribution 
                                        is above that threshold value. This is a nice way of using predictions as it allows us to incorporate the
-                                       model uncertainty when interpreting them.'),
+                                       model uncertainty when interpreting them. Below is an example of this concept. The plot shows a the distribution of prevalence values a single village
+                                       could have. In this example, the model predicts that prevalence at this village could be between 0 - 25%.
+                                       The height of the distribution shows us the relative probability of a prevalence value, e.g. in this case prevalence 
+                                       of 10% is more likely that a prevalence of 5%. By moving the slider, you can estimate the probability that 
+                                       prevalence exceeds that value.'),
                                     
                                     br('We can also use the uncertainty estimates to identify where the model is least sure about whether 
                                         that location is a hotspot or not. In situations where field teams will be conducting more surveys,
@@ -123,7 +127,10 @@ dashboardPage(
                                        simulations have shown that selecting survey locations in this way, as opposed to randomly, allows 
                                        the geospatial models to perform better, improving the certainty we have in the predictions.')
                                       
-                                    ), width = 12)
+                                    ), 
+                                 sliderInput("post_threshold", "Set hotspot prevalence threshold", min=0, max=20, value=10),
+                                 plotOutput("posterior"),
+                                 width = 12)
                     )
                     
              )

@@ -228,25 +228,31 @@ shinyServer(function(input, output){
   
   output$posterior <- renderPlot({
     
+    threshold <- input$post_threshold
+    
     set.seed(1981)
     sample <- rbinom(500, 100, 0.10)
-    binom <- density(sample,0.9)
+    binom <- density(sample,0.7)
     binom <- data.frame(x=binom$x, y=binom$y)
     plot(binom$x, binom$y, type="l", lwd=4, axes=F,
-         xlab="Infection prevalence (%)",ylab="")
-    axis(1)
+         xlab="Infection prevalence (%)",ylab="Relative probability")
+    axis(1,xlim=c(0,25))
+    text(17,0.11, paste0("Probability that prevalence exceeds ", 
+                       threshold,"% is ", mean(sample>=threshold)),cex=1.5)
     polygon(c(binom$x,min(binom$x)), c(binom$y,binom$y[1]),
             col="gray80",
             border=NA)
-    lines(binom$x, binom$y, type="l", lwd=4,)
+    lines(binom$x, binom$y, type="l", lwd=4)
     
     
-    #lines(rep(mean(sample),2),c(0,1))
-    lines(rep(10,2), c(0,0.12), col="red", lwd=3)
-    polygon(c(10,10,binom$x[binom$x>10], 10),
-            c(0,0.11, binom$y[binom$x>10],0),
+
+    closest_x <- which.min(abs(threshold - binom$x))
+    lines(rep(threshold,2), c(0,binom$y[closest_x]), col="red", lwd=3)
+    polygon(c(threshold,threshold,binom$x[binom$x>threshold], threshold),
+            c(0,binom$y[closest_x], binom$y[binom$x>threshold],0),
             col=rgb(1,0.2,0.1, 0.5),
             border=NA)
+    lines(binom$x, binom$y, type="l", lwd=4)
   })
   
   # logos
