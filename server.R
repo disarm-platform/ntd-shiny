@@ -234,11 +234,11 @@ shinyServer(function(input, output){
     sample <- rbinom(500, 100, 0.10)
     binom <- density(sample,0.7)
     binom <- data.frame(x=binom$x, y=binom$y)
-    plot(binom$x, binom$y, type="l", lwd=4, axes=F,
+    plot(binom$x, binom$y, type="l", lwd=4, axes=F, cex.lab=1.5,
          xlab="Infection prevalence (%)",ylab="Relative probability")
     axis(1,xlim=c(0,25))
     text(17,0.11, paste0("Probability that prevalence exceeds ", 
-                       threshold,"% is ", mean(sample>=threshold)),cex=1.5)
+                       threshold,"% is ", round(mean(sample>=threshold),2)),cex=1.5)
     polygon(c(binom$x,min(binom$x)), c(binom$y,binom$y[1]),
             col="gray80",
             border=NA)

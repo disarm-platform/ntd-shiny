@@ -121,16 +121,17 @@ dashboardPage(
                                        of 10% is more likely that a prevalence of 5%. By moving the slider, you can estimate the probability that 
                                        prevalence exceeds that value.'),
                                     
-                                    br('We can also use the uncertainty estimates to identify where the model is least sure about whether 
+
+                                 sliderInput("post_threshold", "Set hotspot prevalence threshold", min=0, max=20, value=10),
+                                 plotOutput("posterior"),
+                                 width = 12),
+                             
+                             br(h4('We can also use the uncertainty estimates to identify where the model is least sure about whether 
                                         that location is a hotspot or not. In situations where field teams will be conducting more surveys,
                                        it makes sense to direct teams to those locations in order to improve the hotspot map. Computerized 
                                        simulations have shown that selecting survey locations in this way, as opposed to randomly, allows 
-                                       the geospatial models to perform better, improving the certainty we have in the predictions.')
-                                      
-                                    ), 
-                                 sliderInput("post_threshold", "Set hotspot prevalence threshold", min=0, max=20, value=10),
-                                 plotOutput("posterior"),
-                                 width = 12)
+                                       the geospatial models to perform better, improving the certainty we have in the predictions.')),
+                             width = 12)
                     )
                     
              )
