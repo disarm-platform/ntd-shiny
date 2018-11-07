@@ -159,7 +159,7 @@ shinyServer(function(input, output) {
     }
     uncertainty <- abs(map_data()$sp_Polygons_df$probability - 0.5)
     output_table <-
-      map_data()$sp_Polygons_df[order(uncertainty),][1:5, c(2, 1)]
+      map_data()$sp_Polygons_df@data[order(uncertainty),][1:5, 1:2]
     output_table[, 2] <- round(output_table[, 2], 2)
     names(output_table) <-
       c("Village ID", "Probability of being a hotspot")
@@ -174,7 +174,7 @@ shinyServer(function(input, output) {
     }
     hotspot_index <-
       which(map_data()$sp_Polygons_df$probability >= input$prob_threshold / 100)
-    hotspot_table <- map_data()$sp_Polygons_df[hotspot_index, 2:1]
+    hotspot_table <- map_data()$sp_Polygons_df@data[hotspot_index, 1:2]
     hotspot_table[, 2] <- round(hotspot_table[, 2], 2)
     names(hotspot_table) <-
       c("Village ID", "Probability of being a hotspot")
