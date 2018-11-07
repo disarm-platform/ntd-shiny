@@ -127,7 +127,7 @@ shinyServer(function(input, output) {
                          y = pred_points$lat,
                          id = pred_points$ID
                        ),
-                       w_buff = 0.3
+                       w_buff = 0.15
                      )
                    
                    # create spdf
