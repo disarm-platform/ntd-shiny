@@ -11,6 +11,7 @@ library(readr)
 library(stringi)
 library(DT)
 library(ggplot2)
+library(geoR)
 
 source("buff_voronoi.R")
 
@@ -40,7 +41,7 @@ shinyServer(function(input, output) {
                    points <- read.csv(inFile$datapath)
                    pred_points <- read.csv(inFile_pred$datapath)
                    
-                   # Check for any missing data
+                   # Check for any missing data in survey data
                    if(sum(!complete.cases(points))>0){
                   
                      showNotification(paste("Removed", sum(!complete.cases(points)), "survey points with missing data"))
@@ -53,10 +54,21 @@ shinyServer(function(input, output) {
                      points <- points[-which(points$Nex==0),]
                    }
                    
+                   #Check for missing or duplicate coords in pred data
                    if(sum(is.na(pred_points$lng))>0){
                      
                      showNotification(paste("Removed", sum(is.na(pred_points$lng)), "prediction points with missing coordinates"))
                      pred_points <- pred_points[complete.cases(pred_points),]
+                   }
+                   
+                   dups <- dup.coords(pred_points[,c("lng", "lat")])
+                   if(length(dups)>0){
+                     
+                     drop <- unlist(sapply(dups, function(x){as.numeric(x[-1])}))
+                     pred_points <- pred_points[-drop,]
+                     
+                     showNotification(paste("Removed", length(drop), "prediction points with duplicate coordinates"))
+                     
                    }
                    
                    
