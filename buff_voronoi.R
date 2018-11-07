@@ -2,7 +2,7 @@ library(maptools)
 library(deldir)
 library(rgeos)
 
-buff_voronoi_test <- function(x, id = 'id', w_buff = 1000, crs = CRS("+init=epsg:32721")) {
+buff_voronoi_test <- function(x, id = 'id', w_buff = 750, crs = CRS("+init=epsg:32721")) {
   SPP <- SpatialPoints(x[ ,1:2], crs)
   if (.hasSlot(SPP, 'coords')) {
     crds <- SPP@coords  

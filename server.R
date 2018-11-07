@@ -41,6 +41,12 @@ shinyServer(function(input, output) {
                    points <- read.csv(inFile$datapath)
                    pred_points <- read.csv(inFile_pred$datapath)
                    
+                   # If pred_points IDs are not unique, then make them
+                   if(length(unique(pred_points$ID))!=nrow(pred_points)){
+                     
+                     pred_points$ID <- paste0(pred_points$ID, 1:nrow(pred_points))
+                   }
+                   
                    # Check for any missing data in survey data
                    if(sum(!complete.cases(points))>0){
                   
