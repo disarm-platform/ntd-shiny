@@ -2,7 +2,8 @@ library(maptools)
 library(deldir)
 library(rgeos)
 
-buff_voronoi_test <- function(x, id = 'id', w_buff = 750, crs = CRS("+init=epsg:32721")) {
+buff_voronoi_test <- function(x, id = 'id', w_buff = 0.3, crs = CRS("+init=epsg:32721")) {
+
   SPP <- SpatialPoints(x[ ,1:2], crs)
   if (.hasSlot(SPP, 'coords')) {
     crds <- SPP@coords  
@@ -19,7 +20,7 @@ buff_voronoi_test <- function(x, id = 'id', w_buff = 750, crs = CRS("+init=epsg:
     pcrds <- rbind(pcrds, pcrds[1,])
     polys[[i]] <- Polygons(list(Polygon(pcrds)), ID = as.character(i))
   }
-  SP <- SpatialPolygons(polys, proj4string = crs)
+  SP <- SpatialPolygons(polys, proj4string = crs) #, pO=1:length(polys)
   SPD <- SpatialPolygonsDataFrame(SP, x ,match.ID = FALSE)
   SPDT <- SpatialPointsDataFrame(SPP, x, match.ID = FALSE)
   # id = paste0("SPDT$", id) 

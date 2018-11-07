@@ -138,12 +138,16 @@ shinyServer(function(input, output) {
                        class = result$estimates$category
                      )
                    
+                   # Merge
+                   sp_Polygons_df <- merge(sp_Polygons, spdf_data, by="id")
+                   
                    return(
                      list(
                        points = points,
                        pred_points = pred_points,
-                       sp_Polygons = sp_Polygons,
-                       spdf_data = spdf_data
+                       #sp_Polygons = sp_Polygons,
+                       #spdf_data = spdf_data
+                       sp_Polygons_df = sp_Polygons_df
                      )
                    )
                  })
@@ -153,9 +157,9 @@ shinyServer(function(input, output) {
     if (is.null(map_data())) {
       return(NULL)
     }
-    uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
+    uncertainty <- abs(map_data()$sp_Polygons_df$probability - 0.5)
     output_table <-
-      map_data()$spdf_data[order(uncertainty),][1:5, c(2, 1)]
+      map_data()$sp_Polygons_df[order(uncertainty),][1:5, c(2, 1)]
     output_table[, 2] <- round(output_table[, 2], 2)
     names(output_table) <-
       c("Village ID", "Probability of being a hotspot")
@@ -169,8 +173,8 @@ shinyServer(function(input, output) {
       return(NULL)
     }
     hotspot_index <-
-      which(map_data()$spdf_data$probability >= input$prob_threshold / 100)
-    hotspot_table <- map_data()$spdf_data[hotspot_index, 2:1]
+      which(map_data()$sp_Polygons_df$probability >= input$prob_threshold / 100)
+    hotspot_table <- map_data()$sp_Polygons_df[hotspot_index, 2:1]
     hotspot_table[, 2] <- round(hotspot_table[, 2], 2)
     names(hotspot_table) <-
       c("Village ID", "Probability of being a hotspot")
@@ -197,17 +201,17 @@ shinyServer(function(input, output) {
     
     labels <- sprintf(
       "<strong>%s</strong><br/>Hotspot probability %g",
-      map_data()$spdf_data$id,
-      round(map_data()$spdf_data$probability, 3)
+      map_data()$sp_Polygons_df$id,
+      round(map_data()$sp_Polygons_df$probability, 3)
     ) %>% lapply(htmltools::HTML)
     
     # Map
     hotspot_class <-
-      ifelse(map_data()$spdf_data$probability >= input$prob_threshold / 100,
+      ifelse(map_data()$sp_Polygons_df$probability >= input$prob_threshold / 100,
              1,
              0)
     map %>% addPolygons(
-      data = map_data()$sp_Polygons,
+      data = map_data()$sp_Polygons_df,
       color = pal(hotspot_class),
       fillOpacity = 0.6,
       weight = 1,
@@ -246,18 +250,18 @@ shinyServer(function(input, output) {
                    seq(0, 1, 0.01))
     
     # define uncertainty
-    uncertainty <- abs(map_data()$spdf_data$probability - 0.5)
+    uncertainty <- abs(map_data()$sp_Polygons_df$probability - 0.5)
     
     # map
     labels <- sprintf(
       "<strong>%s</strong><br/>Hotspot probability %g",
-      map_data()$spdf_data$id,
-      round(map_data()$spdf_data$probability, 3)
+      map_data()$sp_Polygons_df$id,
+      round(map_data()$sp_Polygons_df$probability, 3)
     ) %>% lapply(htmltools::HTML)
     
     map %>% addPolygons(
-      data = map_data()$sp_Polygons,
-      color = pal(map_data()$spdf_data$probability),
+      data = map_data()$sp_Polygons_df,
+      color = pal(map_data()$sp_Polygons_df$probability),
       fillOpacity = 0.6,
       weight = 1,
       highlightOptions = highlightOptions(
@@ -270,7 +274,7 @@ shinyServer(function(input, output) {
     ) %>%
       
       addPolygons(
-        data = map_data()$sp_Polygons[order(uncertainty)[1:5],],
+        data = map_data()$sp_Polygons_df[order(uncertainty)[1:5],],
         col = "deeppink",
         opacity = 1,
         fillOpacity = 0.1,
