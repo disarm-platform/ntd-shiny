@@ -31,6 +31,7 @@ shinyServer(function(input, output) {
     if (is.null(inFile_pred))
       return(NULL)
     
+    
     # Give loading bar
     withProgress(message = 'Hold on',
                  detail = 'Crunching data..',
@@ -38,6 +39,26 @@ shinyServer(function(input, output) {
                  {
                    points <- read.csv(inFile$datapath)
                    pred_points <- read.csv(inFile_pred$datapath)
+                   
+                   # Check for any missing data
+                   if(sum(!complete.cases(points))>0){
+                  
+                     showNotification(paste("Removed", sum(!complete.cases(points)), "survey points with missing data"))
+                     points <- points[complete.cases(points),]
+                   }
+                   
+                   if(sum(points$Nex==0)>0){
+                     
+                     showNotification(paste("Removed", sum(points$Nex==0), "survey points with 0 individuals examined"))
+                     points <- points[-which(points$Nex==0),]
+                   }
+                   
+                   if(sum(is.na(pred_points$lng))>0){
+                     
+                     showNotification(paste("Removed", sum(is.na(pred_points$lng)), "prediction points with missing coordinates"))
+                     pred_points <- pred_points[complete.cases(pred_points),]
+                   }
+                   
                    
                    # Prepare input as JSON
                    input_data_list <-
